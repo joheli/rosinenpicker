@@ -1,4 +1,4 @@
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 import yaml
 import re
 import os
@@ -51,7 +51,7 @@ def process_strategy(strategy_name: str, cs: ConfigStrategy, session: Session, r
                 continue
         # save file info
         d_file = DbProcessedFile(strategy_id = d_strategy.id,
-                                 filename = doc,
+                                 filename = os.path.basename(doc),
                                  sha256 = file_sha256(doc))
         session.add(d_file)
         session.commit()

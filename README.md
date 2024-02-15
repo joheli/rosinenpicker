@@ -5,4 +5,4 @@ passages, you ask? Through regex patterns. But please do read on.
 
 # Installation
 
-coming soon
+Folks this is coming soon so hang on to your pants!

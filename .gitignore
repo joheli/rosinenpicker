@@ -3,3 +3,5 @@ __pycache__/
 testconfigs/
 *.db
 pdfs/
+tipps_*
+.gitignore

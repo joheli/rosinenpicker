@@ -1,11 +1,11 @@
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 import yaml
 import re
 import os
 from .pydantic_models import Config, ConfigStrategy, ConfigError
 from .database import Base, DbRun, DbStrategy, DbProcessedFile, DbMatch
 from .utils import file_sha256
-from .processors import DocumentProcessor, PDFProcessor
+from .processors import DocumentProcessor, PDFProcessor, TXTProcessor
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 import argparse
@@ -73,28 +73,41 @@ def main(config_file: str, db_file: str):
     Session = sessionmaker(bind=engine)
     session = Session()
     
+    # processor options according to file_format
+    file_format_options = {"pdf": PDFProcessor, "txt": TXTProcessor}
+    
     # save run info
     run = DbRun(title = config.title,
               yml_filename = config_file,
               yml_sha256 = file_sha256(config_file))
     session.add(run)
     session.commit()
-    # pass session on
     
     for strategy_name, strategy in config.strategies.items():
-        process_strategy(strategy_name, strategy, session, run.id, PDFProcessor)
+        # processor is chosen according to strategy.file_format
+        processor = file_format_options[strategy.file_format]
+        # process using correct processor
+        process_strategy(strategy_name, strategy, session, run.id, processor)
 
     session.close()
     
 def cli():
-    parser = argparse.ArgumentParser(description='Process PDFs according to a YAML configuration.')
-    parser.add_argument('-c', '--config', default='config.yml', help='Path to configuration YAML file')
-    parser.add_argument('-d', '--database', default='matches.db', help='Path to SQLite database file')
+    parser = argparse.ArgumentParser(description="A package for picking the juciest text morsels out of a pile of documents.")
+    parser.add_argument('-c', '--config', default='config.yml', help='Path to configuration YAML file.')
+    parser.add_argument('-d', '--database', default='matches.db', help='Path to SQLite database file.')
+    parser.add_argument('-v', '--version', help = "Print version and exit.", action="store_true")
     args = parser.parse_args()
+    
+    # version?
+    if args.version:
+        print(f"{__version__}")
+        exit(0)
     
     # check if config exists!
     if not os.path.isfile(args.config):
-        raise Exception("No configuration file provided! Please add one using -c!")
+        print("No configuration file provided! Please add one using -c! Apply -h for help.\n")
+        parser.print_help()
+        exit(1)
 
     main(args.config, args.database)
     

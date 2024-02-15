@@ -1,7 +1,6 @@
-from pydantic import BaseModel, DirectoryPath, constr, field_validator, model_validator, NewPath
+from pydantic import BaseModel, DirectoryPath, field_validator, model_validator, NewPath
 from typing import Optional
 import re
-import yaml
 
 class ConfigError(Exception):
     def __init__(self, msg):
@@ -13,6 +12,7 @@ class ConfigStrategy(BaseModel):
     processed_directory: DirectoryPath
     file_name_pattern: str
     file_content_pattern: Optional[str] = None
+    file_format: str
     terms: dict[str, str]
     export_format: str
     export_path: NewPath
@@ -52,10 +52,18 @@ class ConfigStrategy(BaseModel):
     @field_validator('export_format')
     @classmethod
     def validate_export_format(cls, ef: str):
-        valid_formats = {"csv", "xlsx"}
+        valid_formats = {"csv"}
         if ef not in valid_formats:
             raise ConfigError(msg=f"Concerning '{ef}': Export format must conform to one of these options: {valid_formats}!")
         return ef
+    
+    @field_validator('file_format')
+    @classmethod
+    def validate_file_format(cls, ff: str):
+        valid_formats = {"txt", "pdf"}
+        if ff not in valid_formats:
+            raise ConfigError(msg=f"Concerning '{ff}': File format must conform to one of these options: {valid_formats}!")
+        return ff
     
     @classmethod
     def is_regex(cls, patternstring: str) -> bool:

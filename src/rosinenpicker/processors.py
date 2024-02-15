@@ -40,8 +40,8 @@ class DocumentProcessor:
                     mos = mo.span()
                     content = self.text[mos[0]:mos[1]]
             
-            # document result
-            result[term] = content
+            # strip surrounding whitespace and document result
+            result[term] = content.strip() if content else content
         # put into class attribute
         self.result = result
         
@@ -63,6 +63,12 @@ class PDFProcessor(DocumentProcessor):
             for page in doc:
                 text += page.get_text()
         self.text = text
+        
+class TXTProcessor(DocumentProcessor):
+    def extract_text(self, file_path):
+        with open(file_path, "r") as doc:
+            self.text = doc.read()
+            
 
 # Placeholder for future extensions
 # class MarkdownProcessor(DocumentProcessor):

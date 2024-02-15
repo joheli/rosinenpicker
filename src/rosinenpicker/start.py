@@ -1,4 +1,4 @@
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 import yaml
 import re
 import os
@@ -93,6 +93,8 @@ def cli():
     args = parser.parse_args()
     
     # check if config exists!
+    if not os.path.isfile(args.config):
+        raise Exception("No configuration file provided! Please add one using -c!")
 
     main(args.config, args.database)
     

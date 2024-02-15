@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "pdfs/",
+]
+
+[project]
+name = "rosinenpicker"
+dynamic = ["version"]
+authors = [
+  { name="Johannes Elias", email="joheli@gmx.net" },
+]
+description = "A package for rosinenpicking"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "pydantic>=2.6.1",
+  "pyyaml>=6.0.1",
+  "pymupdf>=1.23.22",
+  "sqlalchemy>=2.0.27",
+]
+
+[project.urls]
+Homepage = "https://github.com/joheli/rosinenpicker"
+Issues = "https://github.com/joheli/rosinenpicker/issues"
+
+[tool.hatch.version]
+path = "src/rosinenpicker/start.py"
+
+[project.scripts]
+rosinenpicker = "rosinenpicker.start:cli"

@@ -2,30 +2,67 @@
 
 ![Python Packaging](https://github.com/joheli/rosinenpicker/workflows/Packaging/badge.svg) ![PyPI](https://img.shields.io/pypi/v/rosinenpicker?label=PyPI) ![PyPI - Downloads](https://img.shields.io/pypi/dm/rosinenpicker)
 
-'Rosinenpicker' is German for 'cherry picker' (never mind that 'Rosine' actually means *raisin*). Be it as it may - cherry picking is what `rosinenpicker` has been designed to do. It goes through a list of documents to extract *just those juicy bits* **you** are interested in. It uses regular expressions to accomplish this. But please do read on to learn how to use the program. 
+[Deutsch](README_DE.md)
 
-# Installation
+# Manual
 
-Please fire up your console and type:
+Welcome to `rosinenpicker`! This tool is like a magical sieve that helps you find golden nuggets (or "Rosinen") of information within a mountain of documents. It's designed for anyone who needs to extract specific pieces of information without diving deep into the technicalities.
 
+## Understanding Key Terms
+
+- **Command Line**: A text-based interface to operate your computer. Imagine telling your computer exactly what to do by typing in commands.
+- **YAML**: A simple configuration file format used by `rosinenpicker` to understand your instructions. It's easy to read and write.
+- **Arguments**: Special instructions you provide to `rosinenpicker` when you start it, telling it where to find its instructions (YAML file) and where to store its findings.
+
+## Getting Started
+
+1. **Installation**: First, let's bring `rosinenpicker` to your computer. Open your command line and type:
+
+   ```
+   pip install rosinenpicker
+   ```
+
+2. **Running the Program**: To launch `rosinenpicker`, enter the following:
+
+   ```
+   rosinenpicker -c path/to/your_config.yml -d path/to/your_database.db
+   ```
+
+   Replace `path/to/your_config.yml` with the actual path to your configuration file, and `path/to/your_database.db` with where you'd like to save the findings. (If not specified, the configuration and database files are assumed to be `config.yml` and `matches.db` in your current directory; also, the database is automatically created if it is not present on your system.)
+
+## Creating Your YAML Configuration
+
+Here's a sample configuration to guide `rosinenpicker`:
+
+```yaml
+title: 'My Document Search'
+strategies:
+  strategy1:
+    processed_directory: '/path/to/documents'
+    file_name_pattern: '.*\.pdf'
+    file_format: 'pdf'
+    terms:
+      term1: 'apple pie'
+    export_format: 'csv'
+    export_path: '/path/to/export.csv'
 ```
-pip install rosinenpicker
-```
 
-This should add the executable `rosinenpicker` to `PATH`, making it accessible from the console.
+This tells `rosinenpicker` to look in `/path/to/documents` for PDF files containing "apple pie" and save results in a CSV file at `/path/to/export.csv`. Fur further information, check out the [sample configuration file](configs/config.yml) in this repository - the file contains additional comments you may find useful.
 
-# Usage
+## Using `rosinenpicker`
 
-Please type
+With your `config.yml` ready, go back to the command line and run `rosinenpicker` with the `-c` and `-d` arguments as shown above.
 
-```
-rosinenpicker -c config_file -d database_file
-```
+## Help and Options
 
-where `config_file` (default: `config.yml`) and `database_file` (default: `matches.db`) represent a yml-formatted configuration file (please see sample [config.yml](configs/config.yml), which is more or less self-explanatory) and a sqlite database file (automatically created if not present), respectively.
-
-For help type
+For a list of commands and options, type:
 
 ```
 rosinenpicker -h
 ```
+
+This command displays all you need to know to navigate `rosinenpicker`.
+
+## Conclusion
+
+You're all set to explore and extract valuable information with `rosinenpicker`. Happy information hunting!

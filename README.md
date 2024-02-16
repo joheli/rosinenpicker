@@ -19,7 +19,7 @@ This should add the executable `rosinenpicker` to `PATH`, making it accessible f
 Please type
 
 ```
-rosenpicker -c config_file -d database_file
+rosinenpicker -c config_file -d database_file
 ```
 
 where `config_file` (default: `config.yml`) and `database_file` (default: `matches.db`) represent a yml-formatted configuration file (please see sample [config.yml](configs/config.yml), which is more or less self-explanatory) and a sqlite database file (automatically created if not present), respectively.
@@ -27,5 +27,5 @@ where `config_file` (default: `config.yml`) and `database_file` (default: `match
 For help type
 
 ```
-rosenpicker -h
+rosinenpicker -h
 ```

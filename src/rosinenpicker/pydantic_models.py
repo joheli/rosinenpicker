@@ -27,19 +27,27 @@ class ConfigStrategy(BaseModel):
         assert v != '', 'Must be a non-empty string'
         return v.strip()
     
+    # @field_validator('terms')
+    # @classmethod
+    # def check_terms(cls, t: dict[str, str]):
+    #    checks = [cls.is_regex(p) for _, p in t.items()]
+    #    if not all(checks):
+    #        raise ConfigError(f"Concerning {t!r}: No regex groups are allowed.")
+    
     @classmethod
     def compile_regex(cls, p: str) -> re.Pattern:
         try:
             rgx = re.compile(p)
             return rgx
         except:
-            raise ConfigError(f"Concerning pattern {p}: this string cannot be used as a regex pattern!")
+            raise ConfigError(f"Concerning pattern '{p}': this string cannot be used as a regex pattern!")
 
     @field_validator('file_name_pattern', 'file_content_pattern')
     @classmethod
     def selection_must_be_regex(cls, v: str):
         v = v.strip()
-        cls.compile_regex(v) # if unsuccessful an error is thrown
+        if not cls.is_regex(v): 
+            raise ConfigError(f"Pattern '{v}' cannot be used as a regex pattern; also, regex groups are not allowed!")
         return v
 
     @model_validator(mode='after')
@@ -69,7 +77,10 @@ class ConfigStrategy(BaseModel):
     def is_regex(cls, patternstring: str) -> bool:
         #breakpoint()
         try: 
-            re.compile(patternstring)
+            rgx = re.compile(patternstring)
+            # Also, do not allow regex groups
+            if rgx.groups > 0:
+                return False
         except:
             return False
         return True
@@ -89,6 +100,9 @@ class ConfigStrategy(BaseModel):
     #   the number of capture groups present.
     #   In case no capture groups have been formed, the second and third integers are set to -1.
     def process_terms(cls, patternstring: str, divider: str = "@@@") -> tuple[re.Pattern, int, int]:
+        # if patternstrings contains groups, reject
+        if not cls.is_regex(patternstring):
+            raise ConfigError(f"Concerning '{patternstring}': cannot be used as regex pattern; also, regex groups are not allowed!")
         # helper to check if pattern only consists of a matchall pattern
         def matchall_only(s) -> bool:
             return re.search("\.\*", s) and len(s) == 2
@@ -106,9 +120,19 @@ class ConfigStrategy(BaseModel):
             return (cls.compile_regex(patternstring), -1, -1)
         # process the patternstrings divided by divider
         multiple_patternstrings = re.split(divider, patternstring)
+        
+        # check if patternstring and multiple_patternstrings are valid regex patterns without groups
+        all_strings = multiple_patternstrings.copy()
+        all_strings.append(patternstring)
+        all_check = [cls.is_regex(s) for s in all_strings]
+        if not all(all_check):
+            raise ConfigError(f"Concerning one of '{all_strings!r}': cannot be used as regex pattern; also regex groups are not allowed!")
+        
+        #breakpoint()
+        
         # do any of the patternstrings only contain a matchall pattern?
         if any([matchall_only(p) for p in multiple_patternstrings]):
-            raise ConfigError(msg=f"At least one of {multiple_patternstrings!r} only consists of a matchall-pattern '.*' and can therefore not be processed.")
+            raise ConfigError(msg=f"At least one of '{multiple_patternstrings!r}' only consists of a matchall-pattern '.*' and can therefore not be processed.")
         # is any of the patternstrings of length 0?
         lenx = [len(i) for i in multiple_patternstrings]
         lenx0 = [l == 0 for l in lenx]

@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 exclude = [
   "pdfs/",
   "configs/",
+  "testconfigs/",
   ".github/",
   "helper/",
   "dumpster/",

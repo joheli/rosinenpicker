@@ -20,12 +20,15 @@ strategies:
     # terms
     terms:
       # Chose names for the terms and associate each with a regex pattern or, alternatively,
-      # two regex patterns surrounding '~@~', which serves as a divider.
+      # two regex patterns surrounding '@@@', which serves as a divider.
       # In the former case (i.e. only one regex pattern, no divider) matches to the regex are returned.
-      # In the latter case (i.e. two regex patterns, divider present) the two regex patterns are converted
-      # to groups surrounding a central "match-all" (.*) pattern. Only matches to the central group are returned.
+      # In the latter case (i.e. divider present) the one or two regex patterns are converted
+      # to groups surrounding a central "match-all" (.*) pattern. Only matches to the "match-all"-group
+      # are returned.
       my_first_term: 'regex1'
       my_second_term: 'regex2@@@regex3'
+      my_third_term: '@@@regex'
+      my_fourth_term: 'regex@@@'
     # export format
     # currently, the following formats are supported: csv, xlsx, html, json
     export_format: 'xlsx'

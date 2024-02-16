@@ -16,6 +16,8 @@ Willkommen bei `rosinenpicker`! Dieses Werkzeug ist wie ein magisches Sieb, das 
 
 ## Erste Schritte
 
+0. **Python 3.11 ist Voraussetzung**: Stellen Sie sicher, dass Python 3.11 oder höher installiert ist. Es gibt viele Wege um Python zu installieren, aber ich empfehle[Miniconda](https://docs.anaconda.com/free/miniconda/index.html).
+
 1. **Installation**: Zuerst bringen wir `rosinenpicker` auf Ihren Computer. Öffnen Sie Ihre Kommandozeile und tippen Sie:
 
    ```

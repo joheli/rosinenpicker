@@ -16,6 +16,8 @@ Welcome to `rosinenpicker`! This tool is like a magical sieve that helps you fin
 
 ## Getting Started
 
+0. **Python 3.11 is a prerequisite**: Make sure you have Python 3.11 or above installed. There are various ways to install Python, but I recommend [Miniconda](https://docs.anaconda.com/free/miniconda/index.html).
+
 1. **Installation**: First, let's bring `rosinenpicker` to your computer. Open your command line and type:
 
    ```

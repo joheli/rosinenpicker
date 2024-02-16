@@ -1,0 +1,36 @@
+# Configuration file
+
+# Title: contains information that helps you identify the processing run
+title: 'A beautiful day'
+
+# Strategies: this section contains parameters that guide the processing of the files
+strategies:
+  # List your strategies here; name strategies as you please
+  my_strategy_01: 
+    # processed_directory: the folder where to be processed files are looked for and hopefully found
+    processed_directory: '/path/to/your_directory'
+    # file_selection_pattern: a regex pattern selecting the files to be processed
+    file_name_pattern: 'regex_pattern_identifying_your_file'
+    # optional: file_content_pattern - a regex pattern that has to return a match in the file contents
+    # this can be used to filter to be processed files in addition to file name
+    #file_content_pattern: '.*'
+    # file_format
+    # currently only 'pdf' and 'txt' are supported
+    file_format: 'pdf'
+    # terms
+    terms:
+      # Chose names for the terms and associate each with a regex pattern or, alternatively,
+      # two regex patterns surrounding '~@~', which serves as a divider.
+      # In the former case (i.e. only one regex pattern, no divider) matches to the regex are returned.
+      # In the latter case (i.e. two regex patterns, divider present) the two regex patterns are converted
+      # to groups surrounding a central "match-all" (.*) pattern. Only matches to the central group are returned.
+      my_first_term: 'regex1'
+      my_second_term: 'regex2@@@regex3'
+    # export format
+    # currently, the following formats are supported: csv, xlsx, html, json
+    export_format: 'xlsx'
+    # export path
+    export_path: '/path/to/your/file.xlsx'
+    # optional, for csv, set export_csv_divider (defaults to ;)
+    #export_csv_divider: ';'
+

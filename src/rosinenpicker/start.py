@@ -1,12 +1,14 @@
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 import yaml
 import re
 import os
+import pandas as pd
 from .pydantic_models import Config, ConfigStrategy, ConfigError
 from .database import Base, DbRun, DbStrategy, DbProcessedFile, DbMatch
 from .utils import file_sha256
+from .exporter import BaseExporter, CSVExporter, XLSXExporter, HTMLExporter, JSONExporter
 from .processors import DocumentProcessor, PDFProcessor, TXTProcessor
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker, Session
 import argparse
 
@@ -23,8 +25,8 @@ def find_documents(directory, file_name_pattern) -> list[str]:
     pattern = re.compile(file_name_pattern)
     return [os.path.join(directory, f) for f in os.listdir(directory) if pattern.match(f)]
 
-def process_strategy(strategy_name: str, cs: ConfigStrategy, session: Session, run_id: int, 
-                     processor: DocumentProcessor):
+def process_strategy(strategy_name: str, cs: ConfigStrategy, db: Session, run_id: int, 
+                     processor: DocumentProcessor, exporter: BaseExporter):
     # save strategy info
     d_strategy = DbStrategy(run_id = run_id,
                             name = strategy_name,
@@ -34,14 +36,15 @@ def process_strategy(strategy_name: str, cs: ConfigStrategy, session: Session, r
                             export_format = cs.export_format,
                             export_path = str(cs.export_path),
                             export_csv_divider = cs.export_csv_divider)
-    session.add(d_strategy)
-    session.commit()
+    db.add(d_strategy)
+    db.commit()
     
-    # loop thru files
+    # locate files (documents)
     documents = find_documents(cs.processed_directory, cs.file_name_pattern)
     if len(documents) < 1:
         raise ConfigError(f"No matching documents found with pattern {cs.file_name_pattern} in directory {cs.processed_directory}!")
     
+    # loop thru documents
     for doc in documents:
         pr = processor(doc, cs.matchall_maxlength)
         # if file_content_pattern is given and if that pattern is not found in the document, skip the document
@@ -53,8 +56,8 @@ def process_strategy(strategy_name: str, cs: ConfigStrategy, session: Session, r
         d_file = DbProcessedFile(strategy_id = d_strategy.id,
                                  filename = os.path.basename(doc),
                                  sha256 = file_sha256(doc))
-        session.add(d_file)
-        session.commit()
+        db.add(d_file)
+        db.commit()
         
         # get content from file
         terms_content = pr.terms_content(cs.terms_patterns_group)
@@ -62,8 +65,30 @@ def process_strategy(strategy_name: str, cs: ConfigStrategy, session: Session, r
         # save content into database
         for term, content in terms_content.items():
             dm = DbMatch(file_id = d_file.id, term = term, content = content)
-            session.add(dm)
-            session.commit()
+            db.add(dm)
+            db.commit()
+    
+    # export
+    # formulate sql query filtering for the current strategy
+    sql = select(DbStrategy.id, DbProcessedFile.id, DbProcessedFile.filename, DbMatch.term, DbMatch.content)\
+    .join(DbStrategy.processed_files).join(DbProcessedFile.matches)\
+    .filter(DbStrategy.id == d_strategy.id)
+    
+    # translate into pandas dataframe
+    df = pd.read_sql_query(sql=sql, con=db.connection())
+    
+    # pivot to wide
+    df_wide = df.pivot(index=['filename'], columns='term', values='content')
+    
+    # pass wide dataframe to exporter
+    exp = exporter(df_wide)
+    
+    # set separator for csv only
+    if cs.export_format == "csv":
+        exporter.separator = cs.export_csv_divider
+    
+    # write to file
+    exp.export(cs.export_path)
     
 def main(config_file: str, db_file: str):
     config = read_config_file(config_file)
@@ -71,25 +96,28 @@ def main(config_file: str, db_file: str):
     Base.metadata.create_all(engine)
     
     Session = sessionmaker(bind=engine)
-    session = Session()
+    db = Session()
     
-    # processor options according to file_format
+    # processor and exporter options according to file_format and export_format
     file_format_options = {"pdf": PDFProcessor, "txt": TXTProcessor}
+    export_format_options = {"csv": CSVExporter, "xlsx": XLSXExporter, "html": HTMLExporter, "json": JSONExporter}
     
     # save run info
     run = DbRun(title = config.title,
               yml_filename = config_file,
               yml_sha256 = file_sha256(config_file))
-    session.add(run)
-    session.commit()
+    db.add(run)
+    db.commit()
     
     for strategy_name, strategy in config.strategies.items():
         # processor is chosen according to strategy.file_format
         processor = file_format_options[strategy.file_format]
+        # exporter is chosen according to strategy.export_format
+        exporter = export_format_options[strategy.export_format]
         # process using correct processor
-        process_strategy(strategy_name, strategy, session, run.id, processor)
+        process_strategy(strategy_name, strategy, db, run.id, processor, exporter)
 
-    session.close()
+    db.close()
     
 def cli():
     parser = argparse.ArgumentParser(description="A package for picking the juciest text morsels out of a pile of documents.")

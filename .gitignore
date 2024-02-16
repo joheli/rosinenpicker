@@ -7,3 +7,4 @@ tipps_*
 .gitignore
 helper
 dumpster/
+*.bat

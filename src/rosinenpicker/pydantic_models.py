@@ -16,7 +16,7 @@ class ConfigStrategy(BaseModel):
     terms: dict[str, str]
     export_format: str
     export_path: NewPath
-    export_csv_divider: str = ';'
+    export_csv_divider: Optional[str] = ';'
     # terms_patterns_group is created from 'terms', see @model_validator
     terms_patterns_group: dict[str, tuple[re.Pattern, int, int]] = None
     matchall_maxlength: int = 100
@@ -52,7 +52,7 @@ class ConfigStrategy(BaseModel):
     @field_validator('export_format')
     @classmethod
     def validate_export_format(cls, ef: str):
-        valid_formats = {"csv"}
+        valid_formats = {"csv", "html", "json", "xlsx"}
         if ef not in valid_formats:
             raise ConfigError(msg=f"Concerning '{ef}': Export format must conform to one of these options: {valid_formats}!")
         return ef

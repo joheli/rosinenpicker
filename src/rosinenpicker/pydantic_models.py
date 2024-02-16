@@ -10,6 +10,7 @@ class ConfigError(Exception):
 
 class ConfigStrategy(BaseModel):
     processed_directory: DirectoryPath
+    move_to_directory: Optional[DirectoryPath] = None
     file_name_pattern: str
     file_content_pattern: Optional[str] = None
     file_format: str

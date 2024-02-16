@@ -1,7 +1,8 @@
-__version__ = '0.1.3'
+__version__ = '0.1.4'
 import yaml
 import re
 import os
+import shutil as sh
 import pathlib as pl
 import pandas as pd
 from .pydantic_models import Config, ConfigStrategy, ConfigError
@@ -73,6 +74,10 @@ def process_strategy(strategy_name: str, cs: ConfigStrategy, db: Session, run_id
             dm = DbMatch(file_id = d_file.id, term = term, content = content)
             db.add(dm)
             db.commit()
+            
+        # move document if all found and 'move_to_directory' was specified
+        if pr.all_found() and cs.move_to_directory:
+            sh.move(doc, cs.move_to_directory)
     
     # export
     # formulate sql query filtering for the current strategy

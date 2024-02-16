@@ -45,6 +45,9 @@ class DocumentProcessor:
         # put into class attribute
         self.result = result
         
+    def all_found(self) -> bool:
+        return not any([n is None for n in self.result])
+        
     def terms_content(self, tap) -> dict[str, str]:
         self.terms_patterns(tap)
         return self.result

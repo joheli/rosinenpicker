@@ -1,19 +1,16 @@
 # Configuration file
 
-# Title: contains information that helps you identify the processing run
-title: 'A beautiful day'
+# Title: contains information that helps you identify the search
+title: 'My document search'
 
 # Strategies: this section contains parameters that guide the processing of the files
 strategies:
-  # List your strategies here; name strategies as you please
+  # List your strategies here. Multiple strategies are allowed. You can name your strategies them as you wish.
   my_strategy_01: 
     # processed_directory: the folder where to be processed files are looked for and hopefully found
     processed_directory: '/path/to/your_directory'
     # file_selection_pattern: a regex pattern selecting the files to be processed
-    file_name_pattern: 'regex_pattern_identifying_your_file'
-    # optional: file_content_pattern - a regex pattern that has to return a match in the file contents
-    # this can be used to filter to be processed files in addition to file name
-    #file_content_pattern: '.*'
+    file_name_pattern: 'regex_pattern_identifying_your_file in /path/to/your_directory'
     # file_format
     # currently only 'pdf' and 'txt' are supported
     file_format: 'pdf'
@@ -34,6 +31,15 @@ strategies:
     export_format: 'xlsx'
     # export path
     export_path: '/path/to/your/file.xlsx'
-    # optional, for csv, set export_csv_divider (defaults to ;)
-    #export_csv_divider: ';'
-
+    # 
+    # O P T I O N A L   K E Y S
+    #
+    # # optional, for csv, set export_csv_divider (defaults to ;)
+    # export_csv_divider: ';'
+    #
+    # # optional: if all terms are found, optionally move to specified directory
+    # move_to_directory: '/path/to/another_directory'
+    #
+    # # optional: file_content_pattern - a regex pattern that has to return a match in the file contents
+    # # this can be used to further restrict the selection of processed files 
+    # file_content_pattern: '.*'

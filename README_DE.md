@@ -49,6 +49,10 @@ strategies:
 
 Dies sagt `rosinenpicker`, in `/pfad/zu/dokumenten` nach PDF-Dateien zu suchen, die "Apfelkuchen" enthalten, und die Ergebnisse in einer CSV-Datei unter `/pfad/zu/export.csv` zu speichern. Weitere Informationen finden Sie in der [Beispielkonfigurationsdatei](configs/config.yml) in diesem Repository - die Datei enthält zusätzliche Kommentare, die Sie nützlich finden könnten.
 
+### Weitere Möglichkeiten
+
+Nun ist es natürlich nicht sehr nützlich, nur den Begriff "Apfelkuchen" aus Dokumenten zu extrahieren. Aber Sie können viel mehr tun. Anstelle von "Apfelkuchen" können Sie einen regulären Ausdruck eingeben, z. B. "\d{8}", um Zahlen zu extrahieren, die aus genau acht Ziffern bestehen. Aber es gibt noch mehr: Wenn Sie einen Ausdruck zusammen mit "@@@" (was für "variable Zeichenfolge" steht) eingeben, wird nur eine Übereinstimmung mit "@@@" zurückgegeben. Z.B. "Name: @@@" wird alles zurückgeben, was auf "Name:" folgt!
+
 ## `rosinenpicker` verwenden
 
 Mit Ihrer fertigen `config.yml` kehren Sie zur Kommandozeile zurück und führen `rosinenpicker` mit den Argumenten `-c` und `-d` wie oben gezeigt aus.

@@ -49,6 +49,10 @@ strategies:
 
 This tells `rosinenpicker` to look in `/path/to/documents` for PDF files containing "apple pie" and save results in a CSV file at `/path/to/export.csv`. Fur further information, check out the [sample configuration file](configs/config.yml) in this repository - the file contains additional comments you may find useful.
 
+### Going deeper
+
+Now of course it is not very useful to just extract the term "apple pie" out of documents. But you can do much more. Instead of "apple pie" you can enter a regular expression, e.g. "\d{8}" to extract numbers consisting of exactly eight digits. But there's more: if you enter an expression along with "@@@" (which stands for "variable string"), only a match to "@@@" is returned. E.g. "Name: @@@" will return whatever follows "Name:"! 
+
 ## Using `rosinenpicker`
 
 With your `config.yml` ready, go back to the command line and run `rosinenpicker` with the `-c` and `-d` arguments as shown above.

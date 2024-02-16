@@ -2,6 +2,7 @@ __version__ = '0.1.2'
 import yaml
 import re
 import os
+import pathlib as pl
 import pandas as pd
 from .pydantic_models import Config, ConfigStrategy, ConfigError
 from .database import Base, DbRun, DbStrategy, DbProcessedFile, DbMatch
@@ -11,6 +12,11 @@ from .processors import DocumentProcessor, PDFProcessor, TXTProcessor
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker, Session
 import argparse
+
+# File format
+# processor and exporter options according to file_format and export_format
+file_format_options = {"pdf": PDFProcessor, "txt": TXTProcessor}
+export_format_options = {"csv": CSVExporter, "xlsx": XLSXExporter, "html": HTMLExporter, "json": JSONExporter}
 
 def read_config_file(config_file: str) -> Config:
     try:
@@ -98,10 +104,6 @@ def main(config_file: str, db_file: str):
     Session = sessionmaker(bind=engine)
     db = Session()
     
-    # processor and exporter options according to file_format and export_format
-    file_format_options = {"pdf": PDFProcessor, "txt": TXTProcessor}
-    export_format_options = {"csv": CSVExporter, "xlsx": XLSXExporter, "html": HTMLExporter, "json": JSONExporter}
-    
     # save run info
     run = DbRun(title = config.title,
               yml_filename = config_file,
@@ -124,12 +126,34 @@ def cli():
     parser.add_argument('-c', '--config', default='config.yml', help='Path to configuration YAML file.')
     parser.add_argument('-d', '--database', default='matches.db', help='Path to SQLite database file.')
     parser.add_argument('-v', '--version', help = "Print version and exit.", action="store_true")
+    parser.add_argument('-r', '--readout', help = "Only read contents of file and exit.")
     args = parser.parse_args()
     
     # version?
     if args.version:
         print(f"{__version__}")
         exit(0)
+        
+    # read out only?
+    if args.readout:
+        if os.path.isfile(args.readout):
+            # determine file ending
+            fe = pl.Path(args.readout).suffix[1:]
+            # file format implemented?
+            if fe not in file_format_options.keys():
+                print(f"File '{args.readout}' appears to be of a type that cannot be read out!")
+                exit(1)
+            # determine processor
+            processor = file_format_options[fe]
+            # print out
+            pr = processor(args.readout, 100) # second argument inconsequential, to be removed at a later point
+            print(pr.text)
+            # exit
+            exit(0)
+        else:
+            print("No file to read out provided!")
+            parser.print_help()
+            exit(1)
     
     # check if config exists!
     if not os.path.isfile(args.config):

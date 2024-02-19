@@ -1,9 +1,11 @@
 from pdfminer.high_level import extract_text
 import re
+from .patterns import Pattern
 
 class DocumentProcessor:
     text: str
     result: dict[str, str]
+    result_required: dict[str, str]
     
     def __init__(self, file_path):
         self.extract_text(file_path = file_path)
@@ -12,46 +14,69 @@ class DocumentProcessor:
         raise NotImplementedError("This method should be implemented by subclasses.")
     
     # function to process the "terms and pattern group" from ConfigStrategy
-    def terms_patterns(self, tap: dict[str, tuple[re.Pattern, int, int]]):
+    def terms_patterns(self, tap: dict[str, Pattern]):
         result = {}
-        for term, pattern_tpl in tap.items():
-            p = pattern_tpl[0]
-            mo = re.search(p, self.text)
+        result_required = {}
+        for term, p in tap.items():
+            mo = re.search(p.compiled_regex_pattern, self.text)
             content = None
-            has_groups = pattern_tpl[1] > 0
+            has_groups = p.compiled_regex_pattern.groups > 0
             # have patterns been found at all?
             if mo:
                 # are groups present?
                 if has_groups:
-                    matchall_index = pattern_tpl[1]
-                    number_of_groups = pattern_tpl[2] # also p.groups
-                    content = mo.group(matchall_index)
+                    #goi = p.group_of_interest
+                    #number_of_groups = p.compiled_regex_pattern.groups 
+                    content = mo.group(p.group_of_interest)
                     # # in case only two groups present: limit length of matched text
-                    # if len(content) > self.matchall_maxlength and number_of_groups == 2:
-                    #     if matchall_index == 1:
-                    #         content = content[-self.matchall_maxlength:]
-                    #     else:
-                    #         content = content[:self.matchall_maxlength]
+                    # if p.pattern_options.cropToLength:
+                    #     if len(content) > p.pattern_options.cropToLength and number_of_groups == 2:
+                    #         if goi == 1:
+                    #             content = content[-p.pattern_options.cropToLength:]
+                    #         else:
+                    #             content = content[:p.pattern_options.cropToLength]
                 # no groups
                 else:
                     # mos: indices of matched text
                     mos = mo.span()
                     content = self.text[mos[0]:mos[1]]
             
+            # further process content
+            # linebreak to space
+            if content and p.pattern_options.lineBreakToSpace:
+                content = re.sub("\n", " ", content)
+                
+            # cropToLength
+            if content and p.pattern_options.cropToLength:
+                if len(content) > p.pattern_options.cropToLength:
+                    if p.compiled_regex_pattern.groups == 2 and p.group_of_interest == 1:
+                        content = content[-p.pattern_options.cropToLength:]
+                    else:
+                        content = content[:p.pattern_options.cropToLength]
+            
+            # strip
+            if content:
+                content = content.strip()
+                
+            # result required
+            if p.pattern_options.required:
+                result_required[term] = content
+            
             # strip surrounding whitespace and document result
-            result[term] = content.strip() if content else content
+            result[term] = content
         # put into class attribute
         self.result = result
+        self.result_required = result_required
         
     def all_found(self) -> bool:
-        return not any([n is None for n in self.result])
+        return not any([n is None for n in self.result_required])
         
     def terms_content(self, tap) -> dict[str, str]:
         self.terms_patterns(tap)
         return self.result
                 
-    def contains(self, patternstring: str) -> bool:
-        pattern = re.compile(patternstring)
+    def contains(self, text_: str) -> bool:
+        pattern = re.compile(text_)
         if pattern.search(self.text):
             return True
         else:

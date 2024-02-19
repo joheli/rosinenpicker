@@ -22,6 +22,13 @@ strategies:
       # In the latter case (i.e. divider present) the one or two regex patterns are converted
       # to groups surrounding a central "match-all" (.*) pattern. Only matches to the "match-all"-group
       # are returned.
+      # Further options can be appended after the string '===' (three equal signs)
+      #   m   multiline           should pattern matching be performed over multiple lines? (default=no)
+      #   l   linebreak to space  in case of m: should line breaks be converted to space? (defailt=no)
+      #   c   crop to length      should length be cropped? (default=no)
+      #   ?   optional term       is the term optional? (default=no, e.g. term is required)
+      # The further options are given thus: e.g. "regex1@@@regex2===mlc(100)?" would mean multiline: yes,
+      # linebreak to space: yes, crop to 100 characters, optional term (e.g. not required)
       my_first_term: 'regex1'
       my_second_term: 'regex2@@@regex3'
       my_third_term: '@@@regex'

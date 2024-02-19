@@ -1,4 +1,4 @@
-__version__ = '0.1.6'
+__version__ = '0.1.7'
 import yaml
 import re
 import os
@@ -151,7 +151,7 @@ def cli():
             # determine processor
             processor = file_format_options[fe]
             # print out
-            pr = processor(args.readout, 100) # second argument inconsequential, to be removed at a later point
+            pr = processor(args.readout) # second argument inconsequential, to be removed at a later point
             print(pr.text)
             # exit
             exit(0)

@@ -1,7 +1,6 @@
-from pydantic import BaseModel, DirectoryPath, field_validator, model_validator, NewPath, StrictBool
-from .utils import process_terms, check_regex
+from pydantic import BaseModel, DirectoryPath, field_validator, model_validator, NewPath
+from .patterns import Pattern
 from typing import Optional
-import re
 
 class ConfigError(Exception):
     def __init__(self, msg):
@@ -20,7 +19,7 @@ class ConfigStrategy(BaseModel):
     export_path: NewPath
     export_csv_divider: Optional[str] = ';'
     # terms_patterns_group is created from 'terms', see @model_validator
-    terms_patterns_group: dict[str, tuple[re.Pattern, int, int]] = None
+    terms_patterns_group: dict[str, Pattern] = None
 
     @field_validator('file_name_pattern', 'export_format')
     @classmethod
@@ -32,7 +31,7 @@ class ConfigStrategy(BaseModel):
     @classmethod
     def selection_must_be_regex(cls, v: str):
         v = v.strip()
-        if not check_regex(v): 
+        if not Pattern.check_regex(v): 
             raise ConfigError(f"Pattern '{v}' cannot be used as a regex pattern; also, regex groups are not allowed!")
         return v
     
@@ -55,7 +54,7 @@ class ConfigStrategy(BaseModel):
     @model_validator(mode='after')
     def check_terms_and_patterns(self):
         # process terms_and_patterns 
-        processed_tp = {term:process_terms(patternstring=pattern) for term, pattern in self.terms.items()}
+        processed_tp = {term:Pattern(patterns_and_options_string=pos) for term, pos in self.terms.items()}
         self.terms_patterns_group = processed_tp
         return self
 

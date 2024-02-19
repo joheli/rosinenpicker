@@ -1,14 +1,12 @@
-import fitz
+from pdfminer.high_level import extract_text
 import re
 
 class DocumentProcessor:
     text: str
-    matchall_maxlength: int
     result: dict[str, str]
     
-    def __init__(self, file_path, matchall_maxlength):
+    def __init__(self, file_path):
         self.extract_text(file_path = file_path)
-        self.matchall_maxlength = matchall_maxlength
     
     def extract_text(self, file_path):
         raise NotImplementedError("This method should be implemented by subclasses.")
@@ -28,12 +26,12 @@ class DocumentProcessor:
                     matchall_index = pattern_tpl[1]
                     number_of_groups = pattern_tpl[2] # also p.groups
                     content = mo.group(matchall_index)
-                    # in case only two groups present: limit length of matched text
-                    if len(content) > self.matchall_maxlength and number_of_groups == 2:
-                        if matchall_index == 1:
-                            content = content[-self.matchall_maxlength:]
-                        else:
-                            content = content[:self.matchall_maxlength]
+                    # # in case only two groups present: limit length of matched text
+                    # if len(content) > self.matchall_maxlength and number_of_groups == 2:
+                    #     if matchall_index == 1:
+                    #         content = content[-self.matchall_maxlength:]
+                    #     else:
+                    #         content = content[:self.matchall_maxlength]
                 # no groups
                 else:
                     # mos: indices of matched text
@@ -61,11 +59,7 @@ class DocumentProcessor:
         
 class PDFProcessor(DocumentProcessor):
     def extract_text(self, file_path):
-        text = ""
-        with fitz.open(file_path) as doc:
-            for page in doc:
-                text += page.get_text()
-        self.text = text
+        self.text = extract_text(file_path)
         
 class TXTProcessor(DocumentProcessor):
     def extract_text(self, file_path):

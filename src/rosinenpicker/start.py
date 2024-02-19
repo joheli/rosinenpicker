@@ -1,4 +1,4 @@
-__version__ = '0.1.5'
+__version__ = '0.1.6'
 import yaml
 import re
 import os
@@ -53,7 +53,7 @@ def process_strategy(strategy_name: str, cs: ConfigStrategy, db: Session, run_id
     
     # loop thru documents
     for doc in documents:
-        pr = processor(doc, cs.matchall_maxlength)
+        pr = processor(doc)
         # if file_content_pattern is given and if that pattern is not found in the document, skip the document
         if cs.file_content_pattern:
             if not pr.contains(cs.file_content_pattern):

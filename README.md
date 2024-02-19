@@ -2,8 +2,6 @@
 
 ![Python Packaging](https://github.com/joheli/rosinenpicker/workflows/Packaging/badge.svg) ![PyPI](https://img.shields.io/pypi/v/rosinenpicker?label=PyPI) ![PyPI - Downloads](https://img.shields.io/pypi/dm/rosinenpicker)
 
-[Deutsch](README_DE.md)
-
 # Manual
 
 Welcome to `rosinenpicker`! This tool is like a magical sieve that helps you find golden nuggets (or "Rosinen") of information within a mountain of documents. It's designed for anyone who needs to extract specific pieces of information without diving deep into the technicalities.

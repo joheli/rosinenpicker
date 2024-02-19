@@ -43,3 +43,4 @@ strategies:
     # # optional: file_content_pattern - a regex pattern that has to return a match in the file contents
     # # this can be used to further restrict the selection of processed files 
     # file_content_pattern: '.*'
+    #

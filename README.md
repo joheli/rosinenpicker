@@ -55,11 +55,12 @@ Now of course it is not very useful to just extract the term "apple pie" out of 
 
 #### Even further fine-grained control
 You can even add more fine-grained control by appending characters after the string '===' (three equal signs):
-  - `m` (**m**ultiline) will allow multiline pattern matching
-  - `l` (**l**inebreak to space) will replace linebreaks with space (only applies for multiline matching)
-  - `c(x)` (**c**rop length to x) will crop the length of the returned string to x
-  - `?` (optional term) will mark the term as not optional; optional key `move_to_directory` (see [sample configuration file](configs/config.yml)) will ignore these terms
-So e.g. a term "start@@@finish===mc(100)l?" will search for text between pattern "start" and "finish" over multiple lines, replace line breaks with space, crop the returned text to 100 characters, and mark the term as optional (not required).
+  - `m` (**m**ultiline) will allow multiline pattern matching (default: off)
+  - `l` (**l**inebreak to space) will replace linebreaks with space (only applies for multiline matching, default: off)
+  - `c(x)` (**c**rop length to x) will crop the length of the returned string to x (default: off)
+  - `?` (optional term) will mark the term as not optional (default: off, i.e. without the question mark the term is assumed to be required); optional key `move_to_directory` (see [sample configuration file](configs/config.yml)) will ignore these terms.
+
+So e.g. a term "start@@@finish===mc(100)l?" will search for text between pattern "start" and "finish" over multiple lines, replace line breaks with space, crop the returned text to 100 characters, and mark the term as optional (e.g. not required).
 
 ## Using `rosinenpicker`
 

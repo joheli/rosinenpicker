@@ -44,7 +44,7 @@ strategies:
     # # optional, for csv, set export_csv_divider (defaults to ;)
     # export_csv_divider: ';'
     #
-    # # optional: if all terms are found, optionally move to specified directory
+    # # optional: if all *required terms* are found, optionally move to specified directory
     # move_to_directory: '/path/to/another_directory'
     #
     # # optional: file_content_pattern - a regex pattern that has to return a match in the file contents

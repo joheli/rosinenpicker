@@ -149,20 +149,27 @@ class Pattern:
         # is any of the patternstrings of length 0? (This occurs if the matchall-pattern not surrounded by two patterns)
         lenx = [len(i) for i in multiple_patternstrings]
         lenx0 = [l == 0 for l in lenx]
+        #print(f"multiple patternstrings: {multiple_patternstrings}, lenx: {lenx}, lenx0: {lenx0}\n")
         # if yes, create two groups
         if any(lenx0):
             # the first group is of interest
             if lenx0[0]:
-                self.compiled_regex_pattern = re.compile(f"(.*)({multiple_patternstrings[1]})", rflag)
+                ps = multiple_patternstrings[1]
+                self.compiled_regex_pattern = re.compile(f"(.*)({ps})", rflag)
+                #print(f"ps: {ps}, rgx: {self.compiled_regex_pattern}\n")
                 self.group_of_interest = 1
                 # return (re.compile(f"(.*)({multiple_patternstrings[1]})", rflag), 1, 2)
+            else:
             # the second group is of interest
-            self.compiled_regex_pattern = re.compile(f"({multiple_patternstrings[0]})(.*)", rflag)
+                ps = multiple_patternstrings[0]
+                self.compiled_regex_pattern = re.compile(f"({ps})(.*)", rflag)
+                #print(f"ps: {ps}, rgx: {self.compiled_regex_pattern}\n")
+                self.group_of_interest = 2
+                # return (re.compile(f"({multiple_patternstrings[0]})(.*)", rflag), 2, 2)
+        else:
+            # none of the patternstrings empty? return three groups
+            self.compiled_regex_pattern = re.compile(f"({multiple_patternstrings[0]})(.*)({multiple_patternstrings[1]})", rflag)
             self.group_of_interest = 2
-            # return (re.compile(f"({multiple_patternstrings[0]})(.*)", rflag), 2, 2)
-        # none of the patternstrings empty? return three groups
-        self.compiled_regex_pattern = re.compile(f"({multiple_patternstrings[0]})(.*)({multiple_patternstrings[1]})", rflag)
-        self.group_of_interest = 2
-        #return (re.compile(f"({multiple_patternstrings[0]})(.*)({multiple_patternstrings[1]})", rflag), 2, 3)
+            #return (re.compile(f"({multiple_patternstrings[0]})(.*)({multiple_patternstrings[1]})", rflag), 2, 3)
         
     

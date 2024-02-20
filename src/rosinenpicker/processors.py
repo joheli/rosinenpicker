@@ -48,11 +48,13 @@ class DocumentProcessor:
                 
             # cropToLength
             if content and p.pattern_options.cropToLength:
-                if len(content) > p.pattern_options.cropToLength:
+                ctl = p.pattern_options.cropToLength + 1 # adding 1 makes sure the length of cropped string equals cropToLength
+                #print(f"pattern: {p.compiled_regex_pattern}, content: {content}, ctl: {ctl}, groups: {p.compiled_regex_pattern.groups}, goi: {p.group_of_interest}\n")
+                if len(content) > ctl:
                     if p.compiled_regex_pattern.groups == 2 and p.group_of_interest == 1:
-                        content = content[-p.pattern_options.cropToLength:]
+                        content = content[-ctl:]
                     else:
-                        content = content[:p.pattern_options.cropToLength]
+                        content = content[:ctl]
             
             # strip
             if content:

@@ -33,7 +33,8 @@ class XLSXExporter(BaseExporter):
 class HTMLExporter(BaseExporter):
     def export(self, export_path: str) -> None:
         self.export_path = export_path
-        self.dataframe.to_html(export_path, )
+        df2 = self.dataframe.reset_index()
+        df2.to_html(export_path, index = False)
         
 class JSONExporter(BaseExporter):
     def export(self, export_path: str) -> None:

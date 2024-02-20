@@ -5,7 +5,7 @@ title: 'My document search'
 
 # Strategies: this section contains parameters that guide the processing of the files
 strategies:
-  # List your strategies here. Multiple strategies are allowed. You can name your strategies them as you wish.
+  # List your strategies here. Multiple strategies are allowed. Name your strategies as you wish!
   my_strategy_01: 
     # processed_directory: the folder where to be processed files are looked for and hopefully found
     processed_directory: '/path/to/your_directory'
@@ -16,19 +16,22 @@ strategies:
     file_format: 'pdf'
     # terms
     terms:
-      # Chose names for the terms and associate each with a regex pattern or, alternatively,
+      # Choose names for the terms and associate each with a regex pattern or, alternatively,
       # two regex patterns surrounding '@@@', which serves as a divider.
       # In the former case (i.e. only one regex pattern, no divider) matches to the regex are returned.
       # In the latter case (i.e. divider present) the one or two regex patterns are converted
       # to groups surrounding a central "match-all" (.*) pattern. Only matches to the "match-all"-group
       # are returned.
       # Further options can be appended after the string '===' (three equal signs)
-      #   m   multiline           should pattern matching be performed over multiple lines? (default=no)
-      #   l   linebreak to space  in case of m: should line breaks be converted to space? (defailt=no)
-      #   c   crop to length      should length be cropped? (default=no)
-      #   ?   optional term       is the term optional? (default=no, e.g. term is required)
-      # The further options are given thus: e.g. "regex1@@@regex2===mlc(100)?" would mean multiline: yes,
-      # linebreak to space: yes, crop to 100 characters, optional term (e.g. not required)
+      #   m   multiline           should pattern matching be performed over multiple lines? (default=off)
+      #   l   linebreak to space  in case of m: should line breaks be converted to space? (default=off)
+      #   c   crop to length      should length be cropped? (default=off)
+      #   ?   optional term       is the term optional? (default=off, e.g. term is required)
+      # The further options are given thus: e.g. "regex1@@@regex2===mlc(100)?" would mean 
+      #   - multiline: yes,
+      #   - linebreak to space: yes
+      #   - crop to 100 characters
+      #   - term is optional (i.e. not required, thus will be ignored if 'move_to_directory' is set)
       my_first_term: 'regex1'
       my_second_term: 'regex2@@@regex3'
       my_third_term: '@@@regex'

@@ -60,16 +60,26 @@ class DocumentProcessor:
                 
             # result required
             if p.pattern_options.required:
+                # print(f"\nGoing into required - Pattern: {p}\n")
+                # print(f"content: {content!r}\n")
                 result_required[term] = content
             
-            # strip surrounding whitespace and document result
+            # document result
+            #print(f"\nGoing into all: {p}\n")
             result[term] = content
         # put into class attribute
         self.result = result
         self.result_required = result_required
         
+        # # Finally 
+        # print(f"all results: {self.result!r}\n")
+        # print(f"required: {self.result_required!r}\n")
+        # na_required = any([n is None for n in self.result_required.values()])
+        # na_all = any([n is None for n in self.result.values()])
+        # print(f"none in required: {na_required}, none in all: {na_all}\n")
+        
     def all_found(self) -> bool:
-        return not any([n is None for n in self.result_required])
+        return not any([n is None for n in self.result_required.values()])
         
     def terms_content(self, tap) -> dict[str, str]:
         self.terms_patterns(tap)

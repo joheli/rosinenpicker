@@ -53,7 +53,7 @@ class DbMatch(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     file_id: Mapped[int] = mapped_column(ForeignKey("processed_file.id"))
     term: Mapped[str] = mapped_column(String(30))
-    content: Mapped[str] = mapped_column(String(100), nullable = True)
+    content: Mapped[str] = mapped_column(String(500), nullable = True)
     processed_file: Mapped["DbProcessedFile"] = relationship(back_populates="matches")
     def __repr__(self) -> str:
         return f"Match(id={self.id!r}, term={self.term!r}, content={self.content!r})"

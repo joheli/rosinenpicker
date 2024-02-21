@@ -12,7 +12,7 @@ strategies:
     # file_selection_pattern: a regex pattern selecting the files to be processed
     file_name_pattern: 'regex_pattern_identifying_your_file in /path/to/your_directory'
     # file_format
-    # currently only 'pdf' and 'txt' are supported
+    # currently only 'pdf', 'docx', and 'txt' are supported
     file_format: 'pdf'
     # terms
     terms:

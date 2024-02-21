@@ -9,14 +9,14 @@ from .pydantic_models import Config, ConfigStrategy, ConfigError
 from .database import Base, DbRun, DbStrategy, DbProcessedFile, DbMatch
 from .utils import file_sha256
 from .exporter import BaseExporter, CSVExporter, XLSXExporter, HTMLExporter, JSONExporter
-from .processors import DocumentProcessor, PDFProcessor, TXTProcessor
+from .processors import DocumentProcessor, PDFProcessor, TXTProcessor, DOCXProcessor
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker, Session
 import argparse
 
 # File format
 # processor and exporter options according to file_format and export_format
-file_format_options = {"pdf": PDFProcessor, "txt": TXTProcessor}
+file_format_options = {"pdf": PDFProcessor, "txt": TXTProcessor, "docx": DOCXProcessor}
 export_format_options = {"csv": CSVExporter, "xlsx": XLSXExporter, "html": HTMLExporter, "json": JSONExporter}
 
 def read_config_file(config_file: str) -> Config:

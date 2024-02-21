@@ -46,7 +46,7 @@ class ConfigStrategy(BaseModel):
     @field_validator('file_format')
     @classmethod
     def validate_file_format(cls, ff: str):
-        valid_formats = {"txt", "pdf"}
+        valid_formats = {"txt", "pdf", "docx"}
         if ff not in valid_formats:
             raise ConfigError(msg=f"Concerning '{ff}': File format must conform to one of these options: {valid_formats}!")
         return ff

@@ -1,4 +1,5 @@
 from pdfminer.high_level import extract_text
+from docx import Document
 import re
 from .patterns import Pattern
 
@@ -102,7 +103,15 @@ class TXTProcessor(DocumentProcessor):
     def extract_text(self, file_path):
         with open(file_path, "r") as doc:
             self.text = doc.read()
-            
+
+class DOCXProcessor(DocumentProcessor):
+    def extract_text(self, file_path):
+        d = Document(file_path)
+        txt = ''
+        for p in d.paragraphs:
+            txt = txt + '\n' + p.text
+        self.text = txt
+        
 
 # Placeholder for future extensions
 # class MarkdownProcessor(DocumentProcessor):

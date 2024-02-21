@@ -33,7 +33,6 @@ dependencies = [
   "pandas>=2.2.0",
   "pydantic>=2.6.1",
   "python-docx>=1.1.0",
-  "python-pptx>=0.6.23",
   "pyyaml>=6.0.1",
   "pdfminer.six>=20231228",
   "sqlalchemy>=2.0.27",

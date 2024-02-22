@@ -10,3 +10,5 @@ dumpster/
 *.bat
 .vscode/
 demo
+build
+dist_exe

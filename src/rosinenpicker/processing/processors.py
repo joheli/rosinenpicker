@@ -1,7 +1,7 @@
 from pdfminer.high_level import extract_text
 from docx import Document
 import re
-from .patterns import Pattern
+from processing.patterns import Pattern
 
 class DocumentProcessor:
     text: str

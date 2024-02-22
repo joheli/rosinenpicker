@@ -1,5 +1,5 @@
 from pydantic import BaseModel, DirectoryPath, field_validator, model_validator, NewPath
-from .patterns import Pattern
+from processing.patterns import Pattern
 from typing import Optional
 
 class ConfigError(Exception):

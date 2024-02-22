@@ -1,3 +1,5 @@
+# cx_Freeze build not successful
+
 import sys
 from cx_Freeze import setup, Executable
 from src.rosinenpicker.start import __version__
@@ -15,6 +17,6 @@ setup(
     version=__version__,
     description="A package for picking the juciest text morsels out of a pile of documents.",
     options={"build_exe": build_exe_options},
-    executables=[Executable("src/rosinenpicker/start.py", base=base)],
+    executables=[Executable("src/rosinenpicker/start.py", base=base, target_name="rosinenpicker")],
 )
 

@@ -1,15 +1,17 @@
-__version__ = '0.1.13'
+__version__ = '0.1.14'
+# see content of __init__.py
+import os
+import sys
 import yaml
 import re
-import os
 import shutil as sh
 import pathlib as pl
 import pandas as pd
-from .pydantic_models import Config, ConfigStrategy, ConfigError
-from .database import Base, DbRun, DbStrategy, DbProcessedFile, DbMatch
-from .utils import file_sha256
-from .exporter import BaseExporter, CSVExporter, XLSXExporter, HTMLExporter, JSONExporter
-from .processors import DocumentProcessor, PDFProcessor, TXTProcessor, DOCXProcessor
+from data.pydantic_models import Config, ConfigStrategy, ConfigError
+from data.database import Base, DbRun, DbStrategy, DbProcessedFile, DbMatch
+from utils.utils import file_sha256
+from processing.exporter import BaseExporter, CSVExporter, XLSXExporter, HTMLExporter, JSONExporter
+from processing.processors import DocumentProcessor, PDFProcessor, TXTProcessor, DOCXProcessor
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker, Session
 import argparse
@@ -137,7 +139,7 @@ def cli():
     # version?
     if args.version:
         print(f"{__version__}")
-        exit(0)
+        sys.exit(0)
         
     # read out only?
     if args.readout:
@@ -147,24 +149,24 @@ def cli():
             # file format implemented?
             if fe not in file_format_options.keys():
                 print(f"File '{args.readout}' appears to be of a type that cannot be read out!")
-                exit(1)
+                sys.exit(1)
             # determine processor
             processor = file_format_options[fe]
             # print out
             pr = processor(args.readout) # second argument inconsequential, to be removed at a later point
             print(pr.text)
             # exit
-            exit(0)
+            sys.exit(0)
         else:
             print("No file to read out provided!")
             parser.print_help()
-            exit(1)
+            sys.exit(1)
     
     # check if config exists!
     if not os.path.isfile(args.config):
         print("No configuration file provided! Please add one using -c! Apply -h for help.\n")
         parser.print_help()
-        exit(1)
+        sys.exit(1)
 
     main(args.config, args.database)
     

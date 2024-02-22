@@ -1,8 +1,8 @@
 hatch>=1.9.3
 hatchling>=1.21.1
+pdfminer.six==20231228
 pydantic>=2.6.1
 pydantic_core>=2.16.2
-PyMuPDF>=1.23.22
-PyMuPDFb>=1.23.22
+python-docx==1.1.0
 PyYAML>=6.0.1
 SQLAlchemy>=2.0.27

@@ -1,4 +1,4 @@
-__version__ = '0.1.14'
+__version__ = '0.1.15'
 # see content of __init__.py
 import os
 import sys
@@ -7,11 +7,11 @@ import re
 import shutil as sh
 import pathlib as pl
 import pandas as pd
-from data.pydantic_models import Config, ConfigStrategy, ConfigError
-from data.database import Base, DbRun, DbStrategy, DbProcessedFile, DbMatch
-from utils.utils import file_sha256
-from processing.exporter import BaseExporter, CSVExporter, XLSXExporter, HTMLExporter, JSONExporter
-from processing.processors import DocumentProcessor, PDFProcessor, TXTProcessor, DOCXProcessor
+from rosinenpicker.data.pydantic_models import Config, ConfigStrategy, ConfigError
+from rosinenpicker.data.database import Base, DbRun, DbStrategy, DbProcessedFile, DbMatch
+from rosinenpicker.utils.utils import file_sha256
+from rosinenpicker.processing.exporter import BaseExporter, CSVExporter, XLSXExporter, HTMLExporter, JSONExporter
+from rosinenpicker.processing.processors import DocumentProcessor, PDFProcessor, TXTProcessor, DOCXProcessor
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker, Session
 import argparse

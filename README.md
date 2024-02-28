@@ -55,12 +55,12 @@ Now of course it is not very useful to just extract the term "apple pie" out of 
 
 #### Even further fine-grained control
 You *can* (i.e. you don't have to) even add more fine-grained control by appending characters after the string '===' (three equal signs):
-  - `m` (**m**ultiline) will allow multiline pattern matching (default: off)
-  - `l` (**l**inebreak to space) will replace linebreaks with space (only applies for multiline matching, default: off)
-  - `c(x)` (**c**rop length to x) will crop the length of the returned string to x (default: off)
-  - `?` (optional term) will mark the term as not optional (default: off, i.e. without the question mark the term is assumed to be required); optional key `move_to_directory` (see [sample configuration file](configs/config.yml)) will ignore these terms.
+  - `m` (**m**ultiline) will allow multiline pattern matching (default: `off`)
+  - `l` (**l**inebreak to space) will replace linebreaks with space (only applies for multiline matching, default: `off`)
+  - `c(x)` (**c**rop length to x) will crop the length of the returned string to x (default: `off`)
+  - `?` will mark the term as *optional* (default: `off`, i.e. without the question mark the term is assumed to be *required*); if set, optional key `move_to_directory` (see [sample configuration file](configs/config.yml)) will ignore this term.
 
-You can use one of above options or several together; the order doesn't count, the main thing is that the option is represented by above flags. So e.g. the term `start@@@finish===mc(100)l?` would search for text between pattern "start" and "finish" over multiple lines, replace line breaks with space, crop the returned text to 100 characters, and mark the term as optional (i.e. not required); it could also have been written as `start@@@finish===lc(100)?m` (i.e. flag order is up to you)!
+You can use one of above options in isolation or several of them in tandem; the order doesn't count, the main thing is that the option is represented by above flags. So e.g. the term `start@@@finish===mc(100)l?` would search for text between pattern "start" and "finish" over multiple lines, replace line breaks with space, crop the returned text to 100 characters, and mark the term as optional (i.e. not required); nevertheless, it could also have been written as `start@@@finish===lc(100)?m` (i.e. flag order is up to you)!
 
 ## Using `rosinenpicker`
 

@@ -1,4 +1,4 @@
-__version__ = '0.1.15'
+__version__ = '0.1.16'
 # see content of __init__.py
 import os
 import sys

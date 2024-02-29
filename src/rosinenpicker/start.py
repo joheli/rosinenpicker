@@ -1,9 +1,11 @@
-__version__ = '0.1.16'
+__version__ = '0.1.17'
+__homepage__ = 'https://github.com/joheli/rosinenpicker'
 # see content of __init__.py
 import os
 import sys
 import yaml
 import re
+import logging
 import shutil as sh
 import pathlib as pl
 import pandas as pd
@@ -15,6 +17,23 @@ from rosinenpicker.processing.processors import DocumentProcessor, PDFProcessor,
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker, Session
 import argparse
+
+# Configure logging to console
+lgr = logging.getLogger("rosinenpicker")
+lgr.setLevel(logging.INFO)
+
+# create console handler and set level to info
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+# create formatter
+formatter = logging.Formatter('%(asctime)s- %(levelname)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+# add formatter to ch
+ch.setFormatter(formatter)
+
+# add ch to logger
+lgr.addHandler(ch)
 
 # File format
 # processor and exporter options according to file_format and export_format
@@ -36,6 +55,9 @@ def find_documents(directory, file_name_pattern) -> list[str]:
 
 def process_strategy(strategy_name: str, cs: ConfigStrategy, db: Session, run_id: int, 
                      processor: DocumentProcessor, exporter: BaseExporter):
+    # log
+    lgr.info(f"Processing strategy '{strategy_name}'")
+    
     # save strategy info
     d_strategy = DbStrategy(run_id = run_id,
                             name = strategy_name,
@@ -103,32 +125,57 @@ def process_strategy(strategy_name: str, cs: ConfigStrategy, db: Session, run_id
     # write to file
     exp.export(cs.export_path)
     
+    # log
+    lgr.info(f"Result has been exported to '{cs.export_path}'")
+    
 def main(config_file: str, db_file: str):
-    config = read_config_file(config_file)
-    engine = create_engine(f'sqlite:///{db_file}')
-    Base.metadata.create_all(engine)
+    # General info
+    print(f"\nThis is rosinenpicker, version {__version__}, by Johannes Elias.\nFor details visit {__homepage__}.\n")
     
-    Session = sessionmaker(bind=engine)
-    db = Session()
-    
-    # save run info
-    run = DbRun(title = config.title,
-              yml_filename = config_file,
-              yml_sha256 = file_sha256(config_file))
-    db.add(run)
-    db.commit()
-    
-    for strategy_name, strategy in config.strategies.items():
-        # processor is chosen according to strategy.file_format
-        processor = file_format_options[strategy.file_format]
-        # exporter is chosen according to strategy.export_format
-        exporter = export_format_options[strategy.export_format]
-        # process using correct processor
-        process_strategy(strategy_name, strategy, db, run.id, processor, exporter)
+    try: 
+        # log
+        lgr.info(f"Reading in config file '{config_file}'")
+        
+        # read config
+        config = read_config_file(config_file)
+        
+        # log
+        lgr.info(f"Connecting to database file '{db_file}'")
+        
+        # create db
+        engine = create_engine(f'sqlite:///{db_file}')
+        Base.metadata.create_all(engine)
+        
+        Session = sessionmaker(bind=engine)
+        db = Session()
+        
+        # log
+        lgr.info(f"Saving run information ({config.title}, '{config_file}')")
+        
+        # save run info
+        run = DbRun(title = config.title,
+                yml_filename = config_file,
+                yml_sha256 = file_sha256(config_file))
+        db.add(run)
+        db.commit()
+        
+        # log
+        lgr.info(f"Looping through strategies.")
+        
+        for strategy_name, strategy in config.strategies.items():
+            # processor is chosen according to strategy.file_format
+            processor = file_format_options[strategy.file_format]
+            # exporter is chosen according to strategy.export_format
+            exporter = export_format_options[strategy.export_format]
+            # process using correct processor
+            process_strategy(strategy_name, strategy, db, run.id, processor, exporter)
 
-    db.close()
+        db.close()
+    except Exception as err:
+        lgr.error(f"The following error was encountered: {err}")
     
 def cli():
+    # argument parser
     parser = argparse.ArgumentParser(description="A package for picking the juciest text morsels out of a pile of documents.")
     parser.add_argument('-c', '--config', default='config.yml', help='Path to configuration YAML file.')
     parser.add_argument('-d', '--database', default='matches.db', help='Path to SQLite database file.')
